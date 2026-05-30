@@ -10,10 +10,11 @@ function Station(id, name) {
     this.name = name;
 }
 
-function Line(id, name, color) {
+function Line(id, name, color, stations = []) {
     this.id = id;
     this.name = name;
     this.color = color;
+    this.stations = stations;
 }
 
 function Event(id, description, effect) {
@@ -42,4 +43,9 @@ function GameStep(id, gameId, stepOrder, fromStationId, toStationId, eventId, co
     this.coinsAfterStep = coinsAfterStep;
 }
 
-export {User, Station, Line, Event, Game, GameStep}
+function Segment(fromStation, toStation) {
+    this.fromStation = fromStation;
+    this.toStation = toStation;
+}
+
+export { User, Station, Line, Event, Game, GameStep, Segment }

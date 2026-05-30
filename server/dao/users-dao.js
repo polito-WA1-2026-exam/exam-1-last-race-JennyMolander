@@ -21,10 +21,10 @@ export const getUser = (username, password) => {
                         resolve(false);
                     else
                         resolve(user);
-                })
+                });
             }
-        })
-    })
+        });
+    });
 }
 
 // Get user by id
@@ -42,6 +42,6 @@ export const getUserById = (userId) => {
 
                 resolve(user);
             }
-        })
-    })
+        });
+    });
 }
