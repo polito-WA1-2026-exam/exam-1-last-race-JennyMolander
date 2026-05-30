@@ -1,5 +1,5 @@
-# Exam #N: "Exam Title"
-## Student: s123456 LASTNAME FIRSTNAME 
+# Exam #1: "Last Race"
+## Student: s362483 MOLANDER JENNY
 
 ## React Client Application Routes
 
