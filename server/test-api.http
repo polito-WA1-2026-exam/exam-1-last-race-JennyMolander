@@ -1,0 +1,39 @@
+# Try valid login
+POST http://localhost:3001/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "JennyMol",
+    "password": "Password"
+}
+###
+
+# Try invalid login
+POST http://localhost:3001/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "JennyMol",
+    "password": "Pasword"
+}
+###
+
+# Get current user
+GET http://localhost:3001/api/sessions/current HTTP/1.1
+
+###
+
+# Log out
+DELETE http://localhost:3001/api/sessions/current HTTP/1.1
+
+###
+
+# Get full network
+GET http://localhost:3001/api/network HTTP/1.1
+
+###
+
+# Get ranking
+GET http://localhost:3001/api/ranking HTTP/1.1
+
+###

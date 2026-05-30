@@ -71,6 +71,7 @@ const isLoggedIn = (req, res, next) => {
   return res.status(401).json({ error: "Not authorized" });
 };
 
+/* ---------------------------------------------------------------------------- */
 /* ROUTES */
 
 /* Session */
@@ -97,6 +98,33 @@ app.delete("/api/sessions/current", (req, res) => {
     res.status(204).end();
   });
 });
+
+/* ---------------------------------------------------------------------------- */
+
+/* Network and Ranking */
+// GET /api/network
+app.get("/api/network", isLoggedIn, async (req, res) => {
+  try {
+    const network = await getFullNetwork();
+    res.json(network);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /api/ranking
+app.get("/api/ranking", isLoggedIn, async (req, res) => {
+  try {
+    const ranking = await getRanking();
+    res.json(ranking);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/* ---------------------------------------------------------------------------- */
+/* Game specific APIs*/
+
 
 /* ---------------------------------------------------------------------------- */
 
