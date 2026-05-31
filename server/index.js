@@ -7,7 +7,7 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 import { getRandomEvent } from './dao/events-dao.js';
-import { createGame, updateGameScore, updateGameStatus, getGame, saveGameStep, getRanking, getGameStepCount } from './dao/games-dao.js';
+import { createGame, updateGameScore, updateGameStatus, getGame, saveGameStep, getRanking, getGameStepCount, saveGameRoute } from './dao/games-dao.js';
 import { getFullNetwork, getAllSegments, getAllStations } from './dao/network-dao.js';
 import { getUser, getUserById } from './dao/users-dao.js';
 import { selectStartAndEndStations, validateRoute } from './utils.js';
@@ -202,11 +202,13 @@ app.post("/api/games/:id/route",
       }
 
       // --- If valid, execute ---
+      await saveGameRoute(game.id, JSON.stringify(route));
       await updateGameStatus(game.id, "executing");
 
       res.json({ valid: true, totalSteps: route.length });
 
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: "Internal server error" });
     }
 
@@ -234,6 +236,12 @@ app.post("/api/games/:id/step",
       if (game.status !== "executing") return res.status(409).json({ error: "Game is not in execution phase" });
 
       const { route, stepIndex } = req.body;
+
+      const savedRoute = JSON.parse(game.route);
+      if (JSON.stringify(savedRoute) !== JSON.stringify(route)) {
+        return res.status(409).json({ error: "Route does not match validated route" });
+      }
+
       const existingSteps = await getGameStepCount(game.id);
       if (stepIndex !== existingSteps) {
         return res.status(409).json({ error: "Invalid step index" });

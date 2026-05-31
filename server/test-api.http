@@ -44,7 +44,7 @@ POST http://localhost:3001/api/games HTTP/1.1
 ###
 
 # Get game by id
-GET http://localhost:3001/api/games/17 HTTP/1.1
+GET http://localhost:3001/api/games/7 HTTP/1.1
 
 ###
 
@@ -54,28 +54,28 @@ GET http://localhost:3001/api/segments HTTP/1.1
 ###
 
 # Send route
-POST http://localhost:3001/api/games/17/route HTTP/1.1
+POST http://localhost:3001/api/games/7/route HTTP/1.1
 content-type: application/json
 
 {
     "route": [
-        {"fromStationId": 6, "toStationId": 9},
-        {"fromStationId": 9, "toStationId": 10},
-        {"fromStationId": 10, "toStationId": 11}
+        {"fromStationId": 9, "toStationId": 8},
+        {"fromStationId": 8, "toStationId": 5},
+        {"fromStationId": 5, "toStationId": 1}
     ]
 }
 ###
 
 # execute segment
-POST http://localhost:3001/api/games/14/step HTTP/1.1
+POST http://localhost:3001/api/games/7/step HTTP/1.1
 content-type: application/json
 
 {
     "route": [
-        {"fromStationId": 8, "toStationId": 9},
-        {"fromStationId": 9, "toStationId": 10},
-        {"fromStationId": 10, "toStationId": 11}
+        {"fromStationId": 9, "toStationId": 8},
+        {"fromStationId": 8, "toStationId": 5},
+        {"fromStationId": 5, "toStationId": 1}
     ],
-    "stepIndex": 3
+    "stepIndex": 2
 }
 ###

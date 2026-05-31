@@ -23,7 +23,7 @@ function Event(id, description, effect) {
     this.effect = effect;
 }
 
-function Game(id, userId, startStationId, destinationStationId, status = 'planning', score = 20, createdAt) {
+function Game(id, userId, startStationId, destinationStationId, status = 'planning', score = 20, createdAt, route = null) {
     this.id = id;
     this.userId = userId;
     this.startStationId = startStationId;
@@ -31,6 +31,7 @@ function Game(id, userId, startStationId, destinationStationId, status = 'planni
     this.status = status;
     this.score = score;
     this.createdAt = createdAt;
+    this.route = route;
 }
 
 function GameStep(id, gameId, stepOrder, fromStationId, toStationId, eventId, coinsAfterStep) {

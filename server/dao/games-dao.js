@@ -9,7 +9,8 @@ const mapRowToGame = (row) => {
         row.destinationStationId,
         row.status,
         row.score,
-        row.createdAt
+        row.createdAt,
+        row.route
     );
 }
 
@@ -113,6 +114,23 @@ export const saveGameStep = (gameId, stepOrder, fromStationId, toStationId, even
                 reject(err);
             } else {
                 resolve(this.lastID);
+            }
+        });
+    });
+}
+
+// Save game route sent by user
+export const saveGameRoute = (gameId, route) => {
+    return new Promise((resolve, reject) => {
+        const sql = "UPDATE games SET route = ? WHERE id = ?";
+
+        db.run(sql, [route, gameId], function (err) {
+            if (err) {
+                reject(err);
+            } else if (this.changes !== 1) {
+                resolve(false);
+            } else {
+                resolve(true);
             }
         });
     });
