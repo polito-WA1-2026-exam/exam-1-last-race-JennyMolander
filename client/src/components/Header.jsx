@@ -26,12 +26,12 @@ function Header() {
     }
 
     return (
-        <nav className="flex justify-between items-center w-full bg-gray-800 text-white p-6">
+        <nav className="flex justify-between items-center w-full bg-gray-800 text-white p-6 h-[10vh]">
             <h1 className="text-2xl">Last Race</h1>
             {user && (
                 <div className="flex items-center gap-4">
                     <span>Logged in as: {user.name}</span>
-                    <button className="btn btn-secondary">Rankings</button>
+                    <button className="btn btn-secondary" onClick={() => navigate('/ranking')}>Rankings</button>
                     <button className="btn btn-secondary" onClick={handleLogOut}>Log out</button>
                 </div>
             )}
