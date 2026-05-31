@@ -135,7 +135,7 @@ app.post("/api/games", isLoggedIn, async (req, res) => {
 
     const gameId = await createGame(req.user.id, startStation.id, destinationStation.id);
 
-    res.json(gameId);
+    res.json({ gameId, startStation, destinationStation });
 
   } catch (err) {
     res.status(500).json({ error: "Could not start game" });
@@ -164,6 +164,18 @@ app.get("/api/segments", isLoggedIn, async (req, res) => {
 
     const segments = await getAllSegments();
     res.json(segments);
+
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// GET /api/stations
+app.get("/api/stations", isLoggedIn, async (req, res) => {
+  try {
+
+    const stations = await getAllStations();
+    res.json(stations);
 
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });

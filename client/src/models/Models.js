@@ -9,15 +9,15 @@ function Segment(fromStation, toStation) {
     this.toStation = toStation;
 }
 
-function Event(id, description, effect) {
-    this.id = id;
-    this.description = description;
-    this.effect = effect;
-}
-
 function Station(id, name) {
     this.id = id;
     this.name = name;
+}
+
+function StationInLine(id, name, position) {
+    this.id = id;
+    this.name = name;
+    this.position = position;
 }
 
 function Line(id, name, color, stations = []) {
@@ -38,4 +38,4 @@ function Game(id, userId, startStationId, destinationStationId, status = 'planni
     this.route = route;
 }
 
-export { User, Event, Segment, Station, Line, Game }
+export { User, Segment, Station, Line, Game, StationInLine };
