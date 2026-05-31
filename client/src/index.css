@@ -1,29 +1,38 @@
 @import "tailwindcss";
 
 @layer components {
-  .btn {
+    .btn {
     @apply px-6 py-2 rounded-lg font-semibold
-           shadow-sm transition-all duration-200
-           cursor-pointer active:scale-95;
-  }
+            shadow-sm transition-all duration-200
+            cursor-pointer active:scale-95;
+    }
 
-  .btn-primary {
+    .btn-primary {
     @apply bg-gray-700 text-white
-           hover:bg-gray-800 hover:shadow-md;
-  }
+            hover:bg-gray-800 hover:shadow-md;
+    }
 
-  .btn-secondary {
+    .btn-secondary {
     @apply bg-gray-600 text-white
-           hover:bg-gray-700 hover:shadow-md;
-  }
+            hover:bg-gray-700 hover:shadow-md;
+    }
 
-  .btn-danger {
+    .btn-danger {
     @apply bg-red-600 text-white
-           hover:bg-red-700 hover:shadow-md;
-  }
+            hover:bg-red-700 hover:shadow-md;
+    }
 
-  .btn-outline {
+    .btn-outline {
     @apply border-2 border-gray-800 text-gray-800
-           hover:bg-gray-800 hover:text-white hover:shadow-md;
-  }
+            hover:bg-gray-800 hover:text-white hover:shadow-md;
+    }
+
+    .page {
+    @apply flex flex-col items-center justify-center gap-4 mt-10;
+    }
+
+    .heading {
+    @apply text-2xl font-semibold;
+    }  
+
 }
