@@ -7,7 +7,7 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 import { getRandomEvent } from './dao/events-dao.js';
-import { createGame, updateGameScore, updateGameStatus, getGame, saveGameStep, getRanking, getGameStepCount, saveGameRoute } from './dao/games-dao.js';
+import { createGame, updateGameScore, updateGameStatus, getGame, saveGameStep, getRanking, getGameStepCount, saveGameRoute, endGame, getActiveGameByUserId } from './dao/games-dao.js';
 import { getFullNetwork, getAllSegments, getAllStations } from './dao/network-dao.js';
 import { getUser, getUserById } from './dao/users-dao.js';
 import { selectStartAndEndStations, validateRoute } from './utils.js';
@@ -128,6 +128,11 @@ app.get("/api/ranking", isLoggedIn, async (req, res) => {
 // POST /api/games
 app.post("/api/games", isLoggedIn, async (req, res) => {
   try {
+    const game = await getActiveGameByUserId(Number(req.user.id));
+    if (game) {
+      return res.status(400).json({ error: "Active game already exists" });
+    }
+
     const stations = await getAllStations();
     const segments = await getAllSegments();
 
@@ -141,6 +146,22 @@ app.post("/api/games", isLoggedIn, async (req, res) => {
     res.status(500).json({ error: "Could not start game" });
   }
 });
+// GET /api/games/current
+app.get("/api/games/current", isLoggedIn, async(req, res) => {
+  try {
+
+    const game = await getActiveGameByUserId(Number(req.user.id));
+    if (!game) {
+      return res.status(400).json({ error: "No active game" });
+    }
+
+    res.json(game);
+
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 // GET /api/games/:id
 app.get("/api/games/:id", isLoggedIn, async(req, res) => {
@@ -155,6 +176,33 @@ app.get("/api/games/:id", isLoggedIn, async(req, res) => {
 
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /api/games/:id/abandon
+app.post("/api/games/:id/abandon", isLoggedIn, async (req, res) => {
+  try {
+    const gameId = Number(req.params.id);
+
+    const game = await getGame(gameId);
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    if (game.userId !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    if (game.status !== "planning" && game.status !== "executing") {
+      return res.status(400).json({ error: "Game is not active" });
+    }
+
+    await endGame(gameId);
+    res.status(200).json({ message: "Game ended" });
+
+  } catch (err) {
+    res.status(500).json({ error: "Could not end game" });
   }
 });
 

@@ -63,3 +63,5 @@ async function getCurrentUser() {
         throw new Error('Network error in getCurrentUser', { cause: ex });
     }
 }
+
+export { login, logout, getCurrentUser }

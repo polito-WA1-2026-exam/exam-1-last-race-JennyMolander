@@ -56,6 +56,26 @@ export const getGame = (gameId) => {
     });
 }
 
+// End a game
+export const endGame = (gameId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE games
+            SET status = "completed", score = 0
+            WHERE id = ?
+        `;
+
+        db.run(sql, [gameId], function (err) {
+            if (err) {
+                reject(err);
+            } else if (this.changes !== 1) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+}
+
 // Update game score
 export const updateGameScore = (gameId, score) => {
     return new Promise((resolve, reject) => {
@@ -182,6 +202,27 @@ export const getGameStepCount = (gameId) => {
                 resolve(false);
             } else {
                 resolve(row.count);
+            }
+        });
+    });
+}
+
+export const getActiveGameByUserId = (userId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM games
+            WHERE userId = ?
+            AND status IN ("planning", "executing")
+        `;
+
+        db.get(sql, [userId], (err, row) => {
+            if (err) {
+                reject(err);
+            } else if (row === undefined) {
+                resolve(false);
+            } else {
+                const game = mapRowToGame(row);
+
+                resolve(game);
             }
         });
     });

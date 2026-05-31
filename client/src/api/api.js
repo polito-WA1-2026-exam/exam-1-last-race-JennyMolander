@@ -1,4 +1,4 @@
-import { Event, Segment, Station, Line, Game, StationInLine } from '../models/Models';
+import { Segment, Station, Line, Game, StationInLine } from '../models/Models';
 
 const SERVER_URL = 'http://localhost:3001/api'
 
@@ -187,3 +187,40 @@ async function executeStep(gameId, route, stepIndex) {
         throw new Error('Network error in executeStep', { cause: ex });
     }
 }
+
+// End game in case of logging out
+async function endGame(gameId) {
+    try {
+        const response = await fetch(`${SERVER_URL}/games/${gameId}/abandon`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            return;
+        } else {
+            throw new Error('HTTP error in endGame, code=' + response.status);
+        }
+    } catch (ex) {
+        throw new Error('Network error in endGame', { cause: ex });
+    }
+}
+
+async function getGameByUserId() {
+    try {
+        const response = await fetch(`${SERVER_URL}/games/current`, {
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            const game = await response.json();
+            return mapGame(game);
+        } else {
+            throw new Error('HTTP error in getGameByUserId, code=' + response.status);
+        }
+    } catch (ex) {
+        throw new Error('Network error in getGameByUserId', { cause: ex });
+    }
+}
+
+export { getNetwork, getRanking, startGame, getGame, getSegments, getStations, submitRoute, executeStep, endGame, getGameByUserId};
