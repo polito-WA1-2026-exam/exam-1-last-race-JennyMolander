@@ -7,9 +7,10 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 import { getRandomEvent } from './dao/events-dao.js';
-import { createGame, updateGameScore, updateGameStatus, getGame, saveGameStep, getRanking } from './dao/games-dao.js';
+import { createGame, updateGameScore, updateGameStatus, getGame, saveGameStep, getRanking, getGameStepCount } from './dao/games-dao.js';
 import { getFullNetwork, getAllSegments, getAllStations } from './dao/network-dao.js';
 import { getUser, getUserById } from './dao/users-dao.js';
+import { selectStartAndEndStations, validateRoute } from './utils.js';
 
 
 const app = express();
@@ -124,7 +125,141 @@ app.get("/api/ranking", isLoggedIn, async (req, res) => {
 
 /* ---------------------------------------------------------------------------- */
 /* Game specific APIs*/
+// POST /api/games
+app.post("/api/games", isLoggedIn, async (req, res) => {
+  try {
+    const stations = await getAllStations();
+    const segments = await getAllSegments();
 
+    const { startStation, destinationStation } = selectStartAndEndStations(stations, segments);
+
+    const gameId = await createGame(req.user.id, startStation.id, destinationStation.id);
+
+    res.json(gameId);
+
+  } catch (err) {
+    res.status(500).json({ error: "Could not start game" });
+  }
+});
+
+// GET /api/games/:id
+app.get("/api/games/:id", isLoggedIn, async(req, res) => {
+  try {
+
+    const game = await getGame(Number(req.params.id));
+
+    if (!game) return res.status(404).json({ error: "Game not found" });
+    if (game.userId !== req.user.id) return res.status(403).json({ error: "Forbidden" });
+
+    res.json(game);
+
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// GET /api/segments
+app.get("/api/segments", isLoggedIn, async (req, res) => {
+  try {
+
+    const segments = await getAllSegments();
+    res.json(segments);
+
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /api/games/:id/route
+app.post("/api/games/:id/route",
+  isLoggedIn,
+  [
+    check("route").isArray({ min: 1 }).withMessage("Route must be a non-empty array"),
+    check("route.*.fromStationId").isInt({ min: 1 }).withMessage("From station id must be an integer minimum 1"),
+    check("route.*.toStationId").isInt({ min: 1 }).withMessage("To station id must be an integer minimum 1")
+  ],
+  async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
+
+    try {
+
+      const game = await getGame(Number(req.params.id));
+      if (!game) return res.status(404).json({ error: "Game not found" });
+      if (game.userId !== req.user.id) return res.status(403).json({ error: "Forbidden" });
+      if (game.status !== "planning") return res.status(409).json({ error: "Game is not in planning phase" });
+
+      const { route } = req.body; // [{ fromStationId, toStationId }, ...]
+      const segments = await getAllSegments();
+
+      const isValidRoute = validateRoute(route, segments, game.startStationId, game.destinationStationId);
+      if (!isValidRoute) {
+        await updateGameScore(game.id, 0);
+        await updateGameStatus(game.id, "completed");
+
+        return res.json({ valid: false });
+      }
+
+      // --- If valid, execute ---
+      await updateGameStatus(game.id, "executing");
+
+      res.json({ valid: true, totalSteps: route.length });
+
+    } catch (err) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+
+  }
+);
+
+// POST /api/games/:id/step
+app.post("/api/games/:id/step",
+  isLoggedIn,
+  [
+    check("route").isArray({ min: 1 }),
+    check("route.*.fromStationId").isInt({ min: 1 }),
+    check("route.*.toStationId").isInt({ min: 1 }),
+    check("stepIndex").isInt({ min: 0 })
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
+
+    try {
+      
+      const game = await getGame(Number(req.params.id));
+      if (!game) return res.status(404).json({ error: "Game not found" });
+      if (game.userId !== req.user.id) return res.status(403).json({ error: "Forbidden" });
+      if (game.status !== "executing") return res.status(409).json({ error: "Game is not in execution phase" });
+
+      const { route, stepIndex } = req.body;
+      const existingSteps = await getGameStepCount(game.id);
+      if (stepIndex !== existingSteps) {
+        return res.status(409).json({ error: "Invalid step index" });
+      }
+      
+      const { fromStationId, toStationId } = route[stepIndex];
+
+      const randomEvent = await getRandomEvent();
+      const newCoins = Math.max(0, game.score + randomEvent.effect);
+
+      await saveGameStep(game.id, stepIndex + 1, fromStationId, toStationId, randomEvent.id, newCoins);
+      await updateGameScore(game.id, newCoins);
+
+      const isLastStep = stepIndex + 1 === route.length;
+      if (isLastStep) {
+        await updateGameStatus(game.id, "completed");
+        return res.json({ done: true, randomEvent, coinsAfterStep: newCoins });
+      }
+
+      res.json({ done: false, randomEvent, coinsAfterStep: newCoins });
+
+    } catch (err) {
+      console.error(err); 
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 /* ---------------------------------------------------------------------------- */
 

@@ -152,3 +152,19 @@ export const getRanking = () => {
         });
     });
 }
+
+export const getGameStepCount = (gameId) => {
+    return new Promise((resolve, reject) => {
+        const sql = "SELECT COUNT(*) AS count FROM game_steps WHERE gameId = ?";
+
+        db.get(sql, [gameId], (err, row) => {
+            if (err) {
+                reject(err);
+            } else if (row === undefined) {
+                resolve(false);
+            } else {
+                resolve(row.count);
+            }
+        });
+    });
+}
