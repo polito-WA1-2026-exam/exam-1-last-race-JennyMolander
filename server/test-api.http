@@ -42,9 +42,13 @@ GET http://localhost:3001/api/ranking HTTP/1.1
 POST http://localhost:3001/api/games HTTP/1.1
 
 ###
+# Get current game
+GET http://localhost:3001/api/games/current HTTP/1.1
+
+###
 
 # Get game by id
-GET http://localhost:3001/api/games/7 HTTP/1.1
+GET http://localhost:3001/api/games/3 HTTP/1.1
 
 ###
 
@@ -54,14 +58,14 @@ GET http://localhost:3001/api/segments HTTP/1.1
 ###
 
 # Send route
-POST http://localhost:3001/api/games/7/route HTTP/1.1
+POST http://localhost:3001/api/games/2/route HTTP/1.1
 content-type: application/json
 
 {
     "route": [
-        {"fromStationId": 9, "toStationId": 8},
-        {"fromStationId": 8, "toStationId": 5},
-        {"fromStationId": 5, "toStationId": 1}
+        {"fromStationId": 2, "toStationId": 5},
+        {"fromStationId": 5, "toStationId": 8},
+        {"fromStationId": 8, "toStationId": 9}
     ]
 }
 ###
@@ -78,4 +82,9 @@ content-type: application/json
     ],
     "stepIndex": 2
 }
+###
+
+# End game
+POST http://localhost:3001/api/games/3/abandon HTTP/1.1
+
 ###
