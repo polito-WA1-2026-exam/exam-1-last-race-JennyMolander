@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@layer components {
+  .btn {
+    @apply px-6 py-2 rounded-lg font-semibold
+           shadow-sm transition-all duration-200
+           cursor-pointer active:scale-95;
+  }
+
+  .btn-primary {
+    @apply bg-gray-700 text-white
+           hover:bg-gray-800 hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-600 text-white
+           hover:bg-gray-700 hover:shadow-md;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white
+           hover:bg-red-700 hover:shadow-md;
+  }
+
+  .btn-outline {
+    @apply border-2 border-gray-800 text-gray-800
+           hover:bg-gray-800 hover:text-white hover:shadow-md;
+  }
+}

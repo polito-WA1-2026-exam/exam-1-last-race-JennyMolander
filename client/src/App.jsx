@@ -7,6 +7,8 @@ import PlanningPage from './components/PlanningPage';
 import ExecutionPage from './components/ExecutionPage';
 import ResultPage from './components/ResultPage';
 import LoginForm from './components/LoginForm';
+import RankingPage from './components/RankingPage';
+import SetUpPage from './components/SetUpPage';
 
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
@@ -27,6 +29,8 @@ function App() {
           <Route path='planning' element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
           <Route path='executing' element={<ProtectedRoute><ExecutionPage /></ProtectedRoute>} />
           <Route path='result' element={<ProtectedRoute><ResultPage /></ProtectedRoute>} />
+          <Route path='ranking' element={<ProtectedRoute><RankingPage /></ProtectedRoute>} />
+          <Route path='setup' element={<ProtectedRoute><SetUpPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </UserContext.Provider>
