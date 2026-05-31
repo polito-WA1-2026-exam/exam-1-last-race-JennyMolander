@@ -212,6 +212,10 @@ async function getGameByUserId() {
             credentials: 'include',
         });
 
+        if (response.status === 404) {
+            return null;
+        }
+
         if (response.ok) {
             const game = await response.json();
             return mapGame(game);
