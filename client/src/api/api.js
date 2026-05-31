@@ -10,11 +10,13 @@ function jsonHeaders() {
 
 // Helper functions
 function mapNetwork(network) {
-    return network.map(line =>
+    const mapped = network.map(line =>
         new Line(line.id, line.name, line.color, line.stations ? line.stations.map(stat =>
             new StationInLine(stat.station.id, stat.station.name, stat.position)
         ) : [])
     );
+    console.log(mapped);
+    return mapped;
 }
 
 function mapGame(game) {
