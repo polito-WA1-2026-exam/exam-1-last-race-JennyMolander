@@ -74,7 +74,7 @@ function PlanningPage() {
             if (response.valid) {
                 navigate('/executing', { state: { gameId: game.id, route, totalSteps: response.totalSteps } });
             } else {
-                navigate('/result', { state: { gameId: game.id } });
+                navigate('/result', { state: { gameId: game.id, valid: false } });
             }
 
         } catch (err) {
