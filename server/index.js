@@ -140,7 +140,7 @@ app.post("/api/games", isLoggedIn, async (req, res) => {
 
     const gameId = await createGame(req.user.id, startStation.id, destinationStation.id);
 
-    res.json({ gameId, startStation, destinationStation });
+    res.json({ gameId, startStation, destinationStation, status: "planning" });
 
   } catch (err) {
     res.status(500).json({ error: "Could not start game" });
