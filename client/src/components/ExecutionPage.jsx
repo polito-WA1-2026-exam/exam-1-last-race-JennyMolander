@@ -10,12 +10,16 @@ function ExecutionPage() {
     
     const [isLoading, setIsLoading] = useState(true);
     const [secondsLeft, setSecondsLeft] = useState(0);
+    const hasStarted = useRef(false);
     const hasFinished = useRef(false);
     const isExecuting = game?.status === "executing";
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (hasStarted.current) return;
+        hasStarted.current = true;
+        
         const fetch = async () => {
             setIsLoading(true);
             try {
@@ -38,12 +42,16 @@ function ExecutionPage() {
 
         const timerId = setTimeout(async () => {
             try {
-                const fetchedStep = await executeStep(gameId, route, stepIndex);
+                const fetchedStep = await executeStep(gameId, route.map(segment => ({
+                    fromStationId: segment.fromStation.id,
+                    toStationId: segment.toStation.id
+                })), stepIndex);
                 setCurrentStep(fetchedStep);
 
                 if (fetchedStep.done) {
                     hasFinished.current = true;
-                    handleDone();
+                    setStepIndex(prev => prev + 1);
+                    setTimeout(() => handleDone(), 4000);
                 } else {
                     setStepIndex(prev => prev + 1);
                 }
@@ -96,9 +104,8 @@ function ExecutionPage() {
                     )}
                 </div>
 
-                {stepIndex < totalSteps && (
-                    <p className="text-sm text-gray-400">{secondsLeft}s until next step</p>
-                )}
+                <p className="text-base text-gray-400">{hasFinished.current ? (`${secondsLeft}s until done`) : (`${secondsLeft}s until next step`)}</p>
+
             </div>
         </div>
     )
