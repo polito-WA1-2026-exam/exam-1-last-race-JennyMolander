@@ -69,7 +69,7 @@ function ExecutionPage() {
     }, [stepIndex]);
 
     useEffect(() => {
-        if (!isExecuting || hasFinished.current) return;
+        if (!isExecuting) return;
         if (secondsLeft <= 0) return;
 
         const timerId = setTimeout(() => {
@@ -89,7 +89,7 @@ function ExecutionPage() {
         <div className="page">
             <h2 className="heading">Executing steps</h2>
             <div className="flex flex-col items-center gap-6 mt-6">
-                <p className="text-sm text-gray-400">{stepIndex} / {totalSteps}</p>
+                <p className="text-base text-gray-500">{stepIndex} / {totalSteps}</p>
                 <div className="flex flex-col items-center gap-2 p-6 bg-gray-50 rounded-xl border border-gray-200 w-96 min-h-32 text-center">
                     {currentStep ? (
                         <>
@@ -104,7 +104,7 @@ function ExecutionPage() {
                     )}
                 </div>
 
-                <p className="text-base text-gray-400">{hasFinished.current ? (`${secondsLeft}s until done`) : (`${secondsLeft}s until next step`)}</p>
+                <p className="text-base text-gray-800">{hasFinished.current ? (`${secondsLeft}s until done`) : (`${secondsLeft}s until next step`)}</p>
 
             </div>
         </div>
