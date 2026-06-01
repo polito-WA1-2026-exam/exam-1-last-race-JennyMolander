@@ -35,7 +35,8 @@ function mapGameResponse(data) {
     return {
         gameId: data.gameId,
         startStation: new Station(data.startStation.id, data.startStation.name),
-        destinationStation: new Station(data.destinationStation.id, data.destinationStation.name)
+        destinationStation: new Station(data.destinationStation.id, data.destinationStation.name),
+        status: data.status
     };
 }
 
