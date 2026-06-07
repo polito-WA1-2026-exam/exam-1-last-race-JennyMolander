@@ -9,7 +9,7 @@ function HomePage() {
     return (
         <div className="page">
             <h2 className="heading">Welcome to the Last Race game</h2>
-            <p className="w-1/2 text-center">You are a passenger in a fictional metro network. You have unlimited time to study the network. When you are ready, the timer starts and the network vanishes. Given a start station and a destination, you must plan a valid route before the timer runs out. Once your route is submitted, you will travel step by step — but beware, unexpected events along the way may add or subtract coins from your score. How high can you score?</p>
+            <p className="w-1/2 text-center">You are a passenger in a fictional metro network. You have unlimited time to study the network. When you are ready, the timer starts and the lines vanishes. Given a start station and a destination, you must plan a valid route before the timer runs out. The route is made by selecting segments from one station to another. Once your route is submitted, you will automatically travel step by step — but beware, unexpected events along the way may add or subtract coins from your score. How high can you score?</p>
             
 
             {!user ? (
