@@ -15,7 +15,6 @@ function mapNetwork(network) {
             new StationInLine(stat.station.id, stat.station.name, stat.position)
         ) : [])
     );
-    console.log(mapped);
     return mapped;
 }
 
@@ -216,7 +215,7 @@ async function getGameByUserId() {
             credentials: 'include',
         });
 
-        if (response.status === 404) {
+        if (response.status === 204) {
             return null;
         }
 

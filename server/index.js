@@ -162,7 +162,7 @@ app.get("/api/games/current", isLoggedIn, async(req, res) => {
 
     const game = await getActiveGameByUserId(Number(req.user.id));
     if (!game) {
-      return res.status(404).json({ error: "No active game" });
+      return res.status(204).end();
     }
 
     res.json(game);
