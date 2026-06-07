@@ -18,6 +18,8 @@ function PlanningPage() {
 
     const navigate = useNavigate();
 
+    // Fetch everything needed to start the game
+    // hasStarted prevents double-fetch
     useEffect(() => {
         if (hasStarted.current) return;
         hasStarted.current = true;
@@ -34,6 +36,7 @@ function PlanningPage() {
                 console.log(newGame.status);
                 setGame(newGame);
                 setStations(fetchedStations);
+                // Duplicate each segment in reverse so the player can travel both directions
                 setSegments(fetchedSegments.flatMap(segment => [
                     segment,
                     { fromStation: segment.toStation, toStation: segment.fromStation }
@@ -49,6 +52,7 @@ function PlanningPage() {
         initialize();
     }, []);
 
+    // Count down secondsLeft by 1 every second. Auto-submits when time runs out.
     useEffect(() => {
         if (!isActive || hasFinished.current) return;
 
@@ -75,8 +79,9 @@ function PlanningPage() {
     const handleSubmit = async (event) => {
         event?.preventDefault();
         if (hasFinished.current) return;
-        hasFinished.current = true;
+        hasFinished.current = true; // Prevent double-submission
 
+        // Empty route — end the game immediately with an invalid result
         if (route.length === 0) {
             try {
                 await endGame(game.gameId);
@@ -87,6 +92,7 @@ function PlanningPage() {
             }
         }
 
+        // Submit the route to the server for validation
         try {
             const response = await submitRoute(game.gameId, route.map(segment => ({
                 fromStationId: segment.fromStation.id,

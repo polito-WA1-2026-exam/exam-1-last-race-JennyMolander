@@ -2,6 +2,7 @@
 const WIDTH = 600;
 const HEIGHT = 400;
 
+// Coordinates in map for stations
 const STATION_COORDS = {
     1:  { x: 0.1,  y: 0.9  },
     2:  { x: 0.1,  y: 0.65  },

@@ -10,9 +10,11 @@ function Header() {
 
     const { user, setUser } = useContext(UserContext);
 
+    // Logging out
     const handleLogOut = async () => {
         try {
             const currentGame = await getGameByUserId();
+            // Ending current game if existing
             if (currentGame) {
                 await endGame(currentGame.id);
             }
@@ -28,6 +30,7 @@ function Header() {
     const handleNavigateToRanking = async () => {
         try {
             const currentGame = await getGameByUserId();
+            // Ending current game if existing
             if (currentGame) {
                 await endGame(currentGame.id);
             }

@@ -16,6 +16,7 @@ function ExecutionPage() {
 
     const navigate = useNavigate();
 
+    // Fetch the game data once on mount. hasStarted prevents double-fetch
     useEffect(() => {
         if (hasStarted.current) return;
         hasStarted.current = true;
@@ -35,6 +36,7 @@ function ExecutionPage() {
         fetch();
     }, []);
 
+    // Execute one step at a time. Runs immediately for the first step, then waits 4 seconds between each step so the player can read what happened
     useEffect(() => {
         if (!isExecuting || hasFinished.current) return;
 
@@ -51,23 +53,26 @@ function ExecutionPage() {
                 if (fetchedStep.done) {
                     hasFinished.current = true;
                     setStepIndex(prev => prev + 1);
+                    // End game when done
                     setTimeout(() => handleDone(), 4000);
                 } else {
-                    setStepIndex(prev => prev + 1);
+                    setStepIndex(prev => prev + 1); // Trigger the next step
                 }
             } catch (err) {
                 console.error(err);
             }
         }, delay);
 
-        return () => clearTimeout(timerId);
+        return () => clearTimeout(timerId); // Clean up if the component unmounts mid-timeout
 
     }, [stepIndex, isExecuting]);
 
+    // Reset the countdown timer to 4 seconds each time a new step is shown
     useEffect(() => {
         if (stepIndex > 0) setSecondsLeft(4);
     }, [stepIndex]);
 
+    // Count down secondsLeft by 1 every second while executing
     useEffect(() => {
         if (!isExecuting) return;
         if (secondsLeft <= 0) return;

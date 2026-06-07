@@ -7,6 +7,7 @@ export const getUser = (username, password) => {
     return new Promise((resolve, reject) => {
         const sql = "SELECT * FROM users WHERE username = ?";
 
+        // Look up the user by username only — password is verified separately
         db.get(sql, [username], (err, row) => {
             if (err) {
                 reject(err);
@@ -15,8 +16,12 @@ export const getUser = (username, password) => {
             } else {
                 const user = new User(row.id, row.username, row.name);
 
+                // Hash the provided password using the same salt that was used when the password was originally stored, producing a 32-byte hash
                 crypto.scrypt(password, row.salt, 32, function(err, hashedPassword) {
                     if (err) reject(err);
+
+                    // Compare the stored hash with the newly computed hash
+                    // Prevent timing attacks with timingSafeEqual by always using the same time
                     if (!crypto.timingSafeEqual(Buffer.from(row.hash, "hex"), hashedPassword))
                         resolve(false);
                     else

@@ -10,6 +10,7 @@ import LoginForm from './components/LoginForm';
 import RankingPage from './components/RankingPage';
 import SetUpPage from './components/SetUpPage';
 
+// Protect routes belonging to logged in users
 function ProtectedRoute({ children }) {
   const { user } = useContext(UserContext);
   if (!user) return <Navigate to="/login" />;

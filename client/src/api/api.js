@@ -209,6 +209,7 @@ async function endGame(gameId) {
     }
 }
 
+// Get current game by user Id
 async function getGameByUserId() {
     try {
         const response = await fetch(`${SERVER_URL}/games/current`, {

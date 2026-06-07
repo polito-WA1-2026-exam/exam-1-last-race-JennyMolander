@@ -84,6 +84,7 @@ export const getAllSegments = () => {
                     const current = rows[i];
                     const next = rows[i+1];
 
+                    // If current and next station belong to the same line, add as segment
                     if (current.lineId === next.lineId) {
                         const fromStation = new Station(current.stationId, current.stationName);
                         const toStation = new Station(next.stationId, next.stationName);

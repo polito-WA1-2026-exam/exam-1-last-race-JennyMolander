@@ -191,6 +191,7 @@ export const getRanking = () => {
     });
 }
 
+// Get total steps made in a game
 export const getGameStepCount = (gameId) => {
     return new Promise((resolve, reject) => {
         const sql = "SELECT COUNT(*) AS count FROM game_steps WHERE gameId = ?";
@@ -207,6 +208,7 @@ export const getGameStepCount = (gameId) => {
     });
 }
 
+// Get possible active game for a user
 export const getActiveGameByUserId = (userId) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM games

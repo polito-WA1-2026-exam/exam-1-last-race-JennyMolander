@@ -16,23 +16,30 @@ import { selectStartAndEndStations, validateRoute } from './utils.js';
 const app = express();
 const port = 3001;
 
-app.use(express.json());
+// Parse incoming JSON request bodies
+app.use(express.json()); 
+// Log HTTP requests to the console during development
 app.use(morgan("dev"));
 
+// Allow requests from the React dev server, with cookies/credentials included
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
 }));
 
+// Stores session data server-side, sends a session cookie to the client
 app.use(session({
   secret: "secret",
-  resave: false,
-  saveUninitialized: false
+  resave: false, // Don't save session if it wasn't modified
+  saveUninitialized: false // Don't create a session until something is stored
 }));
 
+// Set up Passport on each request
 app.use(passport.initialize());
+// Restore authentication state from the session cookie
 app.use(passport.session());
 
+// Define how Passport verifies a username/password login attempt
 passport.use(new LocalStrategy(async (username, password, cb) => {
   try {
     const user = await getUser(username, password);
@@ -41,16 +48,18 @@ passport.use(new LocalStrategy(async (username, password, cb) => {
       return cb(null, false, { message: "Incorrect username or password." });
     }
 
-    return cb(null, user);
+    return cb(null, user); // Authentication successful — pass user to next step
   } catch (err) {
     return cb(err);
   }
 }));
 
+// Store only the userId in the session
 passport.serializeUser((user, cb) => {
   cb(null, user.id);
 });
 
+// On each request, fetch the full user object from the database using the ID in the session
 passport.deserializeUser(async (id, cb) => {
   try {
     const user = await getUserById(id);
@@ -59,14 +68,15 @@ passport.deserializeUser(async (id, cb) => {
       return cb(null, false);
     }
 
-    return cb(null, user);
+    return cb(null, user); // Attach user to req.user for use in route handlers
   } catch (err) {
     return cb(err, null);
   }
 });
 
+// Protects routes - returns 401 if the user is not logged in
 const isLoggedIn = (req, res, next) => {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated()) { // returns True if user has an active session
     return next();
   }
   return res.status(401).json({ error: "Not authorized" });
@@ -186,6 +196,7 @@ app.post("/api/games/:id/abandon", isLoggedIn, async (req, res) => {
 
     const game = await getGame(gameId);
 
+    // Game has to exist, belong to the user and be in planning or executing phase
     if (!game) {
       return res.status(404).json({ error: "Game not found" });
     }
@@ -246,6 +257,7 @@ app.post("/api/games/:id/route",
     try {
 
       const game = await getGame(Number(req.params.id));
+      // Game has to exist, belong to the user and be in planning phase
       if (!game) return res.status(404).json({ error: "Game not found" });
       if (game.userId !== req.user.id) return res.status(403).json({ error: "Forbidden" });
       if (game.status !== "planning") return res.status(409).json({ error: "Game is not in planning phase" });
@@ -291,17 +303,20 @@ app.post("/api/games/:id/step",
     try {
       
       const game = await getGame(Number(req.params.id));
+      // Game has to exist, belong to the user and be in executing phase
       if (!game) return res.status(404).json({ error: "Game not found" });
       if (game.userId !== req.user.id) return res.status(403).json({ error: "Forbidden" });
       if (game.status !== "executing") return res.status(409).json({ error: "Game is not in execution phase" });
 
       const { route, stepIndex } = req.body;
 
+      // Must match saved route
       const savedRoute = JSON.parse(game.route);
       if (JSON.stringify(savedRoute) !== JSON.stringify(route)) {
         return res.status(409).json({ error: "Route does not match validated route" });
       }
 
+      // Step index must be correct
       const existingSteps = await getGameStepCount(game.id);
       if (stepIndex !== existingSteps) {
         return res.status(409).json({ error: "Invalid step index" });
@@ -309,12 +324,15 @@ app.post("/api/games/:id/step",
       
       const { fromStationId, toStationId } = route[stepIndex];
 
+      // Get event and update score
       const randomEvent = await getRandomEvent();
       const newCoins = Math.max(0, game.score + randomEvent.effect);
 
+      // Execute step
       await saveGameStep(game.id, stepIndex + 1, fromStationId, toStationId, randomEvent.id, newCoins);
       await updateGameScore(game.id, newCoins);
 
+      // Check if final step
       const isLastStep = stepIndex + 1 === route.length;
       if (isLastStep) {
         await updateGameStatus(game.id, "completed");
