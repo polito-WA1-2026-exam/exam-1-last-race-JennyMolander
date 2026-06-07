@@ -88,24 +88,38 @@ function ExecutionPage() {
     return (
         <div className="page">
             <h2 className="heading">Executing steps</h2>
-            <div className="flex flex-col items-center gap-6 mt-6">
-                <p className="text-base text-gray-500">{stepIndex} / {totalSteps}</p>
-                <div className="flex flex-col items-center gap-2 p-6 bg-gray-50 rounded-xl border border-gray-200 w-96 min-h-32 text-center">
+            <div className="flex flex-col items-center gap-8 mt-8 px-4">
+                <p className="text-sm text-gray-400 tracking-wide">{stepIndex} / {totalSteps}</p>
+                <div className="w-full max-w-xl bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div
+                    className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                    style={{ width: `${(stepIndex / totalSteps) * 100}%` }}
+                    />
+                </div>
+                <div className="flex flex-col items-center gap-5 p-10 bg-white border border-gray-200 rounded-2xl w-full max-w-xl min-h-56 text-center justify-center">
                     {currentStep ? (
                         <>
-                            <p className="text-base">{currentStep.randomEvent.description}</p>
-                            <p className={`text-sm font-medium mt-1 ${currentStep.randomEvent.effect > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                            <p className="text-2xl font-medium">{currentStep.randomEvent.description}</p>
+                            <p className={`text-3xl font-medium px-6 py-2 rounded-xl ${currentStep.randomEvent.effect > 0 
+                                ? 'bg-green-50 text-green-700'
+                                : currentStep.randomEvent.effect < 0
+                                ? 'bg-red-50 text-red-600'
+                                : 'bg-gray-100 text-gray-500'
+                            }`}>
+                        
                                 {currentStep.randomEvent.effect > 0 ? '+' : ''}{currentStep.randomEvent.effect} coins
                             </p>
-                            <p className="text-xs text-gray-400 mt-2">Total: {currentStep.coinsAfterStep} coins</p>
+                            <p className="text-xs text-gray-600 mt-2">Total: {currentStep.coinsAfterStep} coins</p>
                         </>
                     ) : (
                         <p>Starting...</p>
                     )}
                 </div>
 
-                <p className="text-base text-gray-800">{hasFinished.current ? (`${secondsLeft}s until done`) : (`${secondsLeft}s until next step`)}</p>
-
+                <p className="text-lg text-gray-500">
+                    {hasFinished.current ? `Done in ${secondsLeft}s` : `Next step in `}
+                    {!hasFinished.current && <span className="text-gray-800 font-medium">{secondsLeft}s</span>}
+                </p>
             </div>
         </div>
     )
