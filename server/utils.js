@@ -83,8 +83,13 @@ export const validateRoute = (route, segments, startStationId, destinationStatio
         ])
     );
 
+    const usedSegments = new Set();
+
     for (const segment of route) {
-        if (!validSegments.has(`${segment.fromStationId}-${segment.toStationId}`)) return false;
+        const key = `${segment.fromStationId}-${segment.toStationId}`;
+        if (!validSegments.has(key)) return false;
+        if (usedSegments.has(key)) return false;
+        usedSegments.add(key);
     }
 
     return true;

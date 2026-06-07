@@ -279,10 +279,10 @@ app.post("/api/games/:id/route",
 app.post("/api/games/:id/step",
   isLoggedIn,
   [
-    check("route").isArray({ min: 1 }),
-    check("route.*.fromStationId").isInt({ min: 1 }),
-    check("route.*.toStationId").isInt({ min: 1 }),
-    check("stepIndex").isInt({ min: 0 })
+    check("route").isArray({ min: 1 }).withMessage("Route must be a non-empty array"),
+    check("route.*.fromStationId").isInt({ min: 1 }).withMessage("From station id must be an integer minimum 1"),
+    check("route.*.toStationId").isInt({ min: 1 }).withMessage("To station id must be an integer minimum 1"),
+    check("stepIndex").isInt({ min: 0 }).withMessage("Step index must be an integer minimum 0")
   ],
   async (req, res) => {
     const errors = validationResult(req);
