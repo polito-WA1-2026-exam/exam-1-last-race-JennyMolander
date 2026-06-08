@@ -9,7 +9,7 @@
 - Route `/executing`: Execution page — protected route for the active execution/race phase.
 - Route `/result`: Result page — protected route for viewing results after a race/event is completed.
 - Route `/ranking`: Ranking page — protected route displaying participant rankings/leaderboard.
-- Route `/setup`: Setup page — protected route for configuring race/event settings before starting.
+- Route `/setup`: Setup page — protected route for visualizing full network before starting.
 
 ## API Server
 
