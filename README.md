@@ -3,9 +3,13 @@
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
+- Route `/`: Home page — landing page with general content and navigation entry point.
+- Route `/login`: Login form — unauthenticated route where users sign in to access the application.
+- Route `/planning`: Planning page — protected route for the planning phase of the race/event workflow.
+- Route `/executing`: Execution page — protected route for the active execution/race phase.
+- Route `/result`: Result page — protected route for viewing results after a race/event is completed.
+- Route `/ranking`: Ranking page — protected route displaying participant rankings/leaderboard.
+- Route `/setup`: Setup page — protected route for configuring race/event settings before starting.
 
 ## API Server
 
@@ -75,21 +79,36 @@
 
 ## Main React Components
 
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
+## React Components
 
-(only _main_ components, minor ones may be skipped)
+- `MainLayout`: Top-level layout wrapper that renders the shared `Header` and `Footer` around all page routes.
+- `Header`: Global navigation header displayed on all pages.
+- `Footer`: Global footer displayed on all pages.
+- `HomePage`: Landing page rendered at `/`.
+- `LoginForm`: Authentication form rendered at `/login`.
+- `PlanningPage`: Protected page for the planning phase, rendered at `/planning`.
+- `ExecutionPage`: Protected page for the active execution/race phase, rendered at `/executing`.
+- `ResultPage`: Protected page for viewing post-race results, rendered at `/result`.
+- `RankingPage`: Protected page displaying participant rankings, rendered at `/ranking`.
+- `SetUpPage`: Protected page for viewing full network before planning, rendered at `/setup`.
+- `NetworkVisualizer`: Reusable component for visualizing network/graph data, used within relevant pages.
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![During Game](./img/DuringGame.png)
+![Ranking Page](./img/RankingPage.png)
 
 ## Users Credentials
 
-- username, password (plus any other requested info)
-- username, password (plus any other requested info)
+- username: `JennyMol`, password: `Password` 
+- username: `IrisHun`, password: `Secret`
+- username: `AkselMol`, password: `Hello123`
 
 ## Use of AI Tools
-Briefly describe whether you used any AI tools (e.g., ChatGPT, GitHub Copilot, Claude) while working on this project, for which purposes (e.g., clarifying concepts, debugging, generating code), and how you verified or adapted their output.
-If you did not use any AI tools, simply state so.
+I have used a combination of ChatGPT and Claude for different purposes:
+- Generating text in READ.me file based on my code
+- Debugging by providing the model error messages and code
+- Generate inspiration code for network visualization by SVG and shortest path algorithm
+- Generate some css tailwind lines and get design suggestions
+
+I have verified the output by always making sure I fully understand what the AI does and suggests. 
